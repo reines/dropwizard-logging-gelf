@@ -6,10 +6,10 @@ branches:
   only:
     - master
 
-#env:
-#  global:
-#    - secure: "0BGkXRYeLj1p9v+kcINyjSlDAPUtXFQmBbNM8B7flz/nJ9A9FoDBQVlMJ8/R1zcKmj+vPGNXRVT+rEdTiV8VlhVXAz392MHENvk//5nRynI2DuagGB4/nMf13RsHXm1mbRfR1mGZ/ZJFxB4lxZuKH5aEM3DO97ZxDEQIAv0KHdQ="
-#    - secure: "yuyjzSnXLaBJbEiGzYpNxLKbHlmupwEqhMmm6YGmnxhXc5ZXPq3WVlgyEhFhIYhCvdl7ShIfkw+lPseA/gax0jFJKEPCbZoJRX/WsgAKO30dzL53BdCZasAMf5Sj77/jEUpNmzOjupNrTKQ0cuX+bNALi8iizc/9Zm/2XR50+AY="
-#
-#after_success:
-#  - mvn clean deploy --settings settings.xml
+env:
+  global:
+    - secure: "TmPBOkNcOPGwQuXpXv6fP45vras6bquRApblyCTsxfLlKD0q58a5hxjPlt3De51FE/3Kqb0y0le8NgZ/BPGCBTQo9YlIVORZJYPvYAgXJ+xd1OyowJdTycpu9FZlO9brzw9Yn4SJDIwlRtBOiCI3F81RvqpBKcT8lz/uNXTxAl4="
+    - secure: "Uimw3QuOoJEcsxQNK7/XwUcBgaWV5z6QyfDJUmnEUwSP4qrmpWbQgEAP2p60Z5fKrUVrbdG43eZsoh3qfBvQDwsMojfsCKawSMmCo5A3c9JRL63VOG7cFGCFZ9FUPSe0frd/bzGeH+eNazpplytWHKanN0xOtqmfIKeyTx2c+wA="
+
+after_success:
+  - mvn clean deploy --settings settings.xml
