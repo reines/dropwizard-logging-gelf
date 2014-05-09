@@ -7,14 +7,10 @@ import ch.qos.logback.core.Layout;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.net.HostAndPort;
+import gelf4j.logback.GelfAppender;
 import io.dropwizard.logging.AbstractAppenderFactory;
-import me.moocar.logbackgelf.GelfAppender;
 
 import javax.validation.constraints.NotNull;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * An {@link io.dropwizard.logging.AppenderFactory} implementation which provides an appender that writes events to a Graylog2 server.
@@ -42,26 +38,6 @@ import java.util.Map;
  *         <td>The server where current events are logged.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code additionalFields}</td>
- *         <td></td>
- *         <td>A map of additional fields to include in the gelf payload.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code userLoggerName}</td>
- *         <td>{@code true}</td>
- *         <td>Whether or not to include the field {@code _loggerName}, the fully qualified name of the logger, in the gelf payload.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code useThreadName}</td>
- *         <td>{@code true}</td>
- *         <td>Whether or not to include the field {@code _threadName} in the gelf payload.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code includeFullMDC}</td>
- *         <td>{@code true}</td>
- *         <td>Whether or not all fields from the SLF4J MDC in the gelf payload.</td>
- *     </tr>
- *     <tr>
  *         <td>{@code logFormat}</td>
  *         <td>the default format</td>
  *         <td>
@@ -80,15 +56,6 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
     @NotNull
     private HostAndPort graylog2Server;
 
-    @NotNull
-    private Map<String, String> additionalFields = Collections.emptyMap();
-
-    private boolean useLoggerName = true;
-
-    private boolean useThreadName = true;
-
-    private boolean includeFullMDC = true;
-
     @JsonProperty
     public HostAndPort getGraylog2Server() {
         return graylog2Server;
@@ -99,66 +66,16 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
         this.graylog2Server = graylog2Server;
     }
 
-    @JsonProperty
-    public Map<String, String> getAdditionalFields() {
-        return additionalFields;
-    }
-
-    @JsonProperty
-    public void setAdditionalFields(Map<String, String> additionalFields) {
-        this.additionalFields = additionalFields;
-    }
-
-    public boolean isUseLoggerName() {
-        return useLoggerName;
-    }
-
-    public void setUseLoggerName(boolean useLoggerName) {
-        this.useLoggerName = useLoggerName;
-    }
-
-    public boolean isUseThreadName() {
-        return useThreadName;
-    }
-
-    public void setUseThreadName(boolean useThreadName) {
-        this.useThreadName = useThreadName;
-    }
-
-    public boolean isIncludeFullMDC() {
-        return includeFullMDC;
-    }
-
-    public void setIncludeFullMDC(boolean includeFullMDC) {
-        this.includeFullMDC = includeFullMDC;
-    }
-
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
-        final GelfAppender appender = new GelfAppender();
+        final GelfAppender<ILoggingEvent> appender = new GelfAppender<>();
 
         appender.setName("gelf-appender");
         appender.setContext(context);
-        appender.setFacility(applicationName);
-        appender.setGraylog2ServerHost(graylog2Server.getHostText());
+        appender.getConfig().setHost(graylog2Server.getHostText());
 
         if (graylog2Server.hasPort()) {
-            appender.setGraylog2ServerPort(graylog2Server.getPort());
-        }
-
-        if (!additionalFields.isEmpty()) {
-            appender.setAdditionalFields(additionalFields);
-        }
-
-        appender.setIncludeFullMDC(includeFullMDC);
-        appender.setUseLoggerName(useLoggerName);
-        appender.setUseThreadName(useThreadName);
-
-        try {
-            appender.setHostName(InetAddress.getLocalHost().getCanonicalHostName());
-        }
-        catch (UnknownHostException e) {
-            // NO-OP, default to the normal behaviour, that is InetAddress.getLocalHost().getHostName()
+            appender.getConfig().setPort(graylog2Server.getPort());
         }
 
         addThresholdFilter(appender, threshold);

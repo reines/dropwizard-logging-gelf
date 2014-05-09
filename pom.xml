@@ -15,7 +15,7 @@
 
     <properties>
         <dropwizard.version>0.7.0</dropwizard.version>
-        <logback-gelf.version>0.10p2</logback-gelf.version>
+        <gelf4j.version>1.8</gelf4j.version>
     </properties>
 
     <licenses>
@@ -53,19 +53,9 @@
             <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
-            <groupId>me.moocar</groupId>
-            <artifactId>logback-gelf</artifactId>
-            <version>${logback-gelf.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.realityforge.gelf4j</groupId>
+            <artifactId>gelf4j</artifactId>
+            <version>${gelf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
