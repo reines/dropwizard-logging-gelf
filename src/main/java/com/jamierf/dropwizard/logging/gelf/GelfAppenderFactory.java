@@ -7,6 +7,7 @@ import ch.qos.logback.core.Layout;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.net.HostAndPort;
+import gelf4j.GelfTargetConfig;
 import gelf4j.logback.GelfAppender;
 import io.dropwizard.logging.AbstractAppenderFactory;
 
@@ -77,6 +78,8 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
         if (server.hasPort()) {
             appender.getConfig().setPort(server.getPort());
         }
+
+        appender.getConfig().getDefaultFields().put(GelfTargetConfig.FIELD_FACILITY, applicationName);
 
         addThresholdFilter(appender, threshold);
         appender.start();
