@@ -11,6 +11,8 @@ import io.dropwizard.logging.AbstractAppenderFactory;
 import me.moocar.logbackgelf.GelfAppender;
 
 import javax.validation.constraints.NotNull;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -151,6 +153,13 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
         appender.setIncludeFullMDC(includeFullMDC);
         appender.setUseLoggerName(useLoggerName);
         appender.setUseThreadName(useThreadName);
+
+        try {
+            appender.setHostName(InetAddress.getLocalHost().getCanonicalHostName());
+        }
+        catch (UnknownHostException e) {
+            // NO-OP, default to the normal behaviour, that is InetAddress.getLocalHost().getHostName()
+        }
 
         addThresholdFilter(appender, threshold);
         appender.start();
