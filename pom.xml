@@ -9,9 +9,9 @@
     </parent>
 
     <groupId>com.jamierf.dropwizard</groupId>
-    <artifactId>dropwizard-logging-graylog2</artifactId>
+    <artifactId>dropwizard-logging-gelf</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <name>Dropwizard logging support for Graylog2</name>
+    <name>Dropwizard logging support for GELF</name>
 
     <properties>
         <dropwizard.version>0.7.0</dropwizard.version>

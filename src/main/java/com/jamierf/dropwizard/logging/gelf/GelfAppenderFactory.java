@@ -33,8 +33,8 @@ import javax.validation.constraints.NotNull;
  *         <td>The lowest level of events to write to the server.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code graylog2Server}</td>
- *         <td><b>REQUIRED</b></td>
+ *         <td>{@code server}</td>
+ *         <td>{@code localhost}</td>
  *         <td>The server where current events are logged.</td>
  *     </tr>
  *     <tr>
@@ -54,16 +54,16 @@ import javax.validation.constraints.NotNull;
 public class GelfAppenderFactory extends AbstractAppenderFactory {
 
     @NotNull
-    private HostAndPort graylog2Server;
+    private HostAndPort server = HostAndPort.fromString("localhost");
 
     @JsonProperty
-    public HostAndPort getGraylog2Server() {
-        return graylog2Server;
+    public HostAndPort getServer() {
+        return server;
     }
 
     @JsonProperty
-    public void setGraylog2Server(HostAndPort graylog2Server) {
-        this.graylog2Server = graylog2Server;
+    public void setServer(HostAndPort server) {
+        this.server = server;
     }
 
     @Override
@@ -72,10 +72,10 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
 
         appender.setName("gelf-appender");
         appender.setContext(context);
-        appender.getConfig().setHost(graylog2Server.getHostText());
+        appender.getConfig().setHost(server.getHostText());
 
-        if (graylog2Server.hasPort()) {
-            appender.getConfig().setPort(graylog2Server.getPort());
+        if (server.hasPort()) {
+            appender.getConfig().setPort(server.getPort());
         }
 
         addThresholdFilter(appender, threshold);
