@@ -50,6 +50,16 @@
             <groupId>me.moocar</groupId>
             <artifactId>logback-gelf</artifactId>
             <version>${logback-gelf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -166,7 +176,6 @@
                     <effort>Max</effort>
                     <threshold>Default</threshold>
                     <xmlOutput>true</xmlOutput>
-                    <excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile>
                 </configuration>
                 <executions>
                     <execution>
