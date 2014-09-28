@@ -14,10 +14,9 @@ import io.dropwizard.logging.AbstractAppenderFactory;
 import javax.validation.constraints.NotNull;
 
 /**
- * An {@link io.dropwizard.logging.AppenderFactory} implementation which provides an appender that writes events to a Graylog2 server.
- * <p/>
+ * <p>An {@link io.dropwizard.logging.AppenderFactory} implementation which provides an appender that writes events to a Graylog2 server.</p>
  * <b>Configuration Parameters:</b>
- * <table>
+ * <table summary="Configuration">
  *     <tr>
  *         <td>Name</td>
  *         <td>Default</td>
