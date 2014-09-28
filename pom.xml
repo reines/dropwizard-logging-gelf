@@ -10,7 +10,7 @@
 
     <groupId>com.jamierf.dropwizard</groupId>
     <artifactId>dropwizard-logging-gelf</artifactId>
-    <version>0.3</version>
+    <version>0.4-SNAPSHOT</version>
     <name>Dropwizard logging support for GELF</name>
 
     <properties>
