@@ -11,15 +11,19 @@ dropwizard-logging-gelf can be found in maven central.
 
 ## Installation
 
-    <dependency>
-        <groupId>com.jamierf.dropwizard</groupId>
-        <artifactId>dropwizard-logging-gelf</artifactId>
-        <version>...</version>
-    </dependency>
+```xml
+<dependency>
+    <groupId>com.jamierf.dropwizard</groupId>
+    <artifactId>dropwizard-logging-gelf</artifactId>
+    <version>...</version>
+</dependency>
+```
 
 ## Configuration
 
-    logging:
-      appenders:
-        - type: gelf
-          server: localhost:9200
+```yaml
+logging:
+  appenders:
+    - type: gelf
+      server: localhost:9200
+```
