@@ -27,3 +27,7 @@ logging:
     - type: gelf
       server: localhost:9200
 ```
+
+## License
+
+Released under the [Apache 2.0 License](LICENSE).
