@@ -12,8 +12,8 @@ import gelf4j.logback.GelfAppender;
 import io.dropwizard.logging.AbstractAppenderFactory;
 
 import javax.validation.constraints.NotNull;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * <p>An {@link io.dropwizard.logging.AppenderFactory} implementation which provides an appender that writes events to a Graylog2 server.</p>
@@ -40,6 +40,20 @@ import java.net.UnknownHostException;
  *         <td>The server where current events are logged.</td>
  *     </tr>
  *     <tr>
+ *         <td>{@code defaultFields}</td>
+ *         <td>{@code {}}</td>
+ *         <td> A JSON format object for constant values merged ito the message. Default: {} (optional)</td>
+ *     </tr>
+ *      <tr>
+ *         <td>{@code additionalFields}</td>
+ *         <td>{@code {"threadName": "threadName", "exception": "exception", "loggerName": "loggerName", "timestampMs": "timestampMs"}}</td>
+ *         <td> A JSON object that describes dynamic fields that should be merged into the message.
+ *         The key indicates the name of the field in message while the value is a symbolic key that indicates
+ *         the source or type information that should be merged into the message.
+ *         The supported symbolic keys vary between the different supported logging frameworks.
+ *         Default: {"threadName": "threadName", "exception": "exception", "loggerName": "loggerName", "timestampMs": "timestampMs"} (optional)</td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code logFormat}</td>
  *         <td>the default format</td>
  *         <td>
@@ -57,7 +71,8 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
 
     @NotNull
     private HostAndPort server = HostAndPort.fromString("localhost");
-    private String hostName = getShortHostName();
+    private Map<String, String> defaultFields = Collections.emptyMap();
+    private Map<String, String> additionalFields = Collections.emptyMap();
 
     @JsonProperty
     public HostAndPort getServer() {
@@ -70,13 +85,27 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
     }
 
     @JsonProperty
-    public String getHostName() {
-        return hostName;
+    public void setDefaultFields(Map<String, String> defaultFields)
+    {
+        this.defaultFields = defaultFields;
     }
 
     @JsonProperty
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
+    public Map<String, String> getDefaultFields()
+    {
+        return defaultFields;
+    }
+
+    @JsonProperty
+    public void setAdditionalFields(Map<String, String> additionalFields)
+    {
+        this.additionalFields = additionalFields;
+    }
+
+    @JsonProperty
+    public Map<String, String> getAdditionalFields()
+    {
+        return additionalFields;
     }
 
     @Override
@@ -87,14 +116,17 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
         appender.setContext(context);
         appender.getConfig().setHost(server.getHostText());
 
-
-
         if (server.hasPort()) {
             appender.getConfig().setPort(server.getPort());
         }
 
         appender.getConfig().getDefaultFields().put(GelfTargetConfig.FIELD_FACILITY, applicationName);
-        appender.getConfig().getDefaultFields().put(GelfTargetConfig.FIELD_HOST, hostName);
+        appender.getConfig().getDefaultFields().putAll(defaultFields);
+        if(!additionalFields.isEmpty())
+        {
+            appender.getConfig().getAdditionalFields().clear();
+            appender.getConfig().getAdditionalFields().putAll(additionalFields);
+        }
 
         addThresholdFilter(appender, threshold);
         appender.start();
@@ -102,20 +134,4 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
         return wrapAsync(appender);
     }
 
-    private static String getShortHostName()
-    {
-        String hostName = null;
-        try
-        {
-            hostName = InetAddress.getLocalHost().getHostName();
-            hostName = hostName.split("\\.")[0];
-            hostName = hostName.replaceAll("[^a-zA-Z0-9_-]", "_");
-        }
-        catch (UnknownHostException e)
-        {
-            hostName = "localhost";
-        }
-
-        return hostName;
-    }
 }
