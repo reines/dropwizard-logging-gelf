@@ -12,6 +12,8 @@ import gelf4j.logback.GelfAppender;
 import io.dropwizard.logging.AbstractAppenderFactory;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * <p>An {@link io.dropwizard.logging.AppenderFactory} implementation which provides an appender that writes events to a Graylog2 server.</p>
@@ -38,6 +40,20 @@ import javax.validation.constraints.NotNull;
  *         <td>The server where current events are logged.</td>
  *     </tr>
  *     <tr>
+ *         <td>{@code defaultFields}</td>
+ *         <td>{@code {}}</td>
+ *         <td> A JSON format object for constant values merged ito the message. Default: {} (optional)</td>
+ *     </tr>
+ *      <tr>
+ *         <td>{@code additionalFields}</td>
+ *         <td>{@code {"threadName": "threadName", "exception": "exception", "loggerName": "loggerName", "timestampMs": "timestampMs"}}</td>
+ *         <td> A JSON object that describes dynamic fields that should be merged into the message.
+ *         The key indicates the name of the field in message while the value is a symbolic key that indicates
+ *         the source or type information that should be merged into the message.
+ *         The supported symbolic keys vary between the different supported logging frameworks.
+ *         Default: {"threadName": "threadName", "exception": "exception", "loggerName": "loggerName", "timestampMs": "timestampMs"} (optional)</td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code logFormat}</td>
  *         <td>the default format</td>
  *         <td>
@@ -55,6 +71,8 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
 
     @NotNull
     private HostAndPort server = HostAndPort.fromString("localhost");
+    private Map<String, String> defaultFields = Collections.emptyMap();
+    private Map<String, String> additionalFields = Collections.emptyMap();
 
     @JsonProperty
     public HostAndPort getServer() {
@@ -64,6 +82,30 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
     @JsonProperty
     public void setServer(HostAndPort server) {
         this.server = server;
+    }
+
+    @JsonProperty
+    public void setDefaultFields(Map<String, String> defaultFields)
+    {
+        this.defaultFields = defaultFields;
+    }
+
+    @JsonProperty
+    public Map<String, String> getDefaultFields()
+    {
+        return defaultFields;
+    }
+
+    @JsonProperty
+    public void setAdditionalFields(Map<String, String> additionalFields)
+    {
+        this.additionalFields = additionalFields;
+    }
+
+    @JsonProperty
+    public Map<String, String> getAdditionalFields()
+    {
+        return additionalFields;
     }
 
     @Override
@@ -79,10 +121,17 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
         }
 
         appender.getConfig().getDefaultFields().put(GelfTargetConfig.FIELD_FACILITY, applicationName);
+        appender.getConfig().getDefaultFields().putAll(defaultFields);
+        if(!additionalFields.isEmpty())
+        {
+            appender.getConfig().getAdditionalFields().clear();
+            appender.getConfig().getAdditionalFields().putAll(additionalFields);
+        }
 
         addThresholdFilter(appender, threshold);
         appender.start();
 
         return wrapAsync(appender);
     }
+
 }
