@@ -12,6 +12,8 @@ import gelf4j.logback.GelfAppender;
 import io.dropwizard.logging.AbstractAppenderFactory;
 
 import javax.validation.constraints.NotNull;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * <p>An {@link io.dropwizard.logging.AppenderFactory} implementation which provides an appender that writes events to a Graylog2 server.</p>
@@ -55,6 +57,7 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
 
     @NotNull
     private HostAndPort server = HostAndPort.fromString("localhost");
+    private String hostName = getShortHostName();
 
     @JsonProperty
     public HostAndPort getServer() {
@@ -66,6 +69,16 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
         this.server = server;
     }
 
+    @JsonProperty
+    public String getHostName() {
+        return hostName;
+    }
+
+    @JsonProperty
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final GelfAppender<ILoggingEvent> appender = new GelfAppender<>();
@@ -74,15 +87,35 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
         appender.setContext(context);
         appender.getConfig().setHost(server.getHostText());
 
+
+
         if (server.hasPort()) {
             appender.getConfig().setPort(server.getPort());
         }
 
         appender.getConfig().getDefaultFields().put(GelfTargetConfig.FIELD_FACILITY, applicationName);
+        appender.getConfig().getDefaultFields().put(GelfTargetConfig.FIELD_HOST, hostName);
 
         addThresholdFilter(appender, threshold);
         appender.start();
 
         return wrapAsync(appender);
+    }
+
+    private static String getShortHostName()
+    {
+        String hostName = null;
+        try
+        {
+            hostName = InetAddress.getLocalHost().getHostName();
+            hostName = hostName.split("\\.")[0];
+            hostName = hostName.replaceAll("[^a-zA-Z0-9_-]", "_");
+        }
+        catch (UnknownHostException e)
+        {
+            hostName = "localhost";
+        }
+
+        return hostName;
     }
 }
