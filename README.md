@@ -26,6 +26,8 @@ logging:
   appenders:
     - type: gelf
       server: localhost:9200
+      defaultFields: {"host": "local-host-01", "environment": "local", "facility": "ims"}
+      additionalFields: {"ms": "timestampMs", "thread_name": "threadName", "source_method_name": "SourceMethodName", "threadId": "threadId"}
 ```
 
 ## License
