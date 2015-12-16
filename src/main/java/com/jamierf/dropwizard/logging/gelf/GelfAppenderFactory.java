@@ -85,26 +85,22 @@ public class GelfAppenderFactory extends AbstractAppenderFactory {
     }
 
     @JsonProperty
-    public void setDefaultFields(Map<String, String> defaultFields)
-    {
+    public void setDefaultFields(Map<String, String> defaultFields) {
         this.defaultFields = defaultFields;
     }
 
     @JsonProperty
-    public Map<String, String> getDefaultFields()
-    {
+    public Map<String, String> getDefaultFields() {
         return defaultFields;
     }
 
     @JsonProperty
-    public void setAdditionalFields(Map<String, String> additionalFields)
-    {
+    public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
     }
 
     @JsonProperty
-    public Map<String, String> getAdditionalFields()
-    {
+    public Map<String, String> getAdditionalFields() {
         return additionalFields;
     }
 
